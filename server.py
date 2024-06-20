@@ -2,12 +2,14 @@ import asyncio
 import logging
 import sys
 from os import getenv
-
+import json
 from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
+
+from services import get_aggregated_salary_data
 
 # Bot token can be obtained via https://t.me/BotFather
 TOKEN = getenv("BOT_TOKEN")
@@ -38,8 +40,9 @@ async def echo_handler(message: Message) -> None:
     By default, message handler will handle all message types (like a text, photo, sticker etc.)
     """
     try:
+        input_dict = json.loads(message.text.replace("\n", ""))
         # Send a copy of the received message
-        await message.send_copy(chat_id=message.chat.id)
+        await message.answer(get_aggregated_salary_data(input_dict['dt_from'], input_dict['dt_upto'], input_dict['group_type']))
     except TypeError:
         # But not all the types is supported to be copied so need to handle it
         await message.answer("Nice try!")

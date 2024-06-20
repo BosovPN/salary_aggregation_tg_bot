@@ -12,3 +12,9 @@ client = MongoClient(uri)
 db = client['database']
 
 coll = db['sample_collection']
+
+
+def get_values_in_time_interval(dt_from: str, dt_upto: str):
+    query = {'dt': {'$gte':dt_from, '$lte':dt_upto}}
+    result = coll.find(query)
+    return result
